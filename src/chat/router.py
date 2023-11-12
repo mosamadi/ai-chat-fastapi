@@ -19,13 +19,13 @@ def new_interaction(interaction: chat_schema.InteractionBaseModel , user:UserMod
 
 
 @router.get('/interactions',response_model=List[chat_schema.InteractionResponseModel])
-def get_user_all_interactions(user:UserModel= Depends(get_auth_user)) :
+async def get_user_all_interactions(user:UserModel= Depends(get_auth_user)) :
     interactions = user.interactions
     return  [chat_schema.InteractionResponseModel(**interaction.__dict__) for interaction in interactions]
 
 
 @router.post('/interaction/message',response_model=chat_schema.IntractionMessageReponseModel)
-async def new_interaction_message(interaction_message: chat_schema.BaseInteractionMessage, user:UserModel= Depends(get_auth_user) ,db: Session = Depends(get_db_session)):
+def new_interaction_message(interaction_message: chat_schema.BaseInteractionMessage, user:UserModel= Depends(get_auth_user) ,db: Session = Depends(get_db_session)):
     db_intraction = chat_services.get_intraction(interaction_message.intraction_id,db)
 
     if db_intraction is None:
@@ -36,7 +36,7 @@ async def new_interaction_message(interaction_message: chat_schema.BaseInteracti
     chat_services.create_interation_messages(db,chat_schema.InteractionMessage(**interaction_message.model_dump()))
     ai = get_AI_conselor()
     ai_intraction = ai.get_AI_consultancy(db_intraction.messages)
-    ai_response = await chat_services.create_interation_messages(db,ai_intraction)
+    ai_response = chat_services.create_interation_messages(db,ai_intraction)
 
     return ai_response
 

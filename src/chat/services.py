@@ -21,7 +21,7 @@ def get_intraction(id:int,db: Session,)-> models.Intraction:
 
 
 
-async def create_interation_messages(db: Session, interaction_message: chat_schemas.InteractionMessage) -> chat_schemas.IntractionMessageReponseModel:    
+def create_interation_messages(db: Session, interaction_message: chat_schemas.InteractionMessage) -> chat_schemas.IntractionMessageReponseModel:    
     db_chat_intraction_message = models.InteractionMessage( **interaction_message.model_dump())
     db.add(db_chat_intraction_message)
     db.commit()
